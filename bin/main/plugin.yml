@@ -1,0 +1,13 @@
+main: com.wostenberg.minecraft.pressf.PressFPlugin
+name: pressF
+version: 0.1
+api-version: 1.16
+author: Jwosty
+commands:
+  reload:
+    description: Reloads pressF config
+    useage: /pressf:<command>
+    permission: pressf.reload
+permissions:
+  pressf.reload:
+    default: op

@@ -25,7 +25,7 @@ public class PressFPlugin extends JavaPlugin implements Listener {
         this.loadConfig();
         this.saveConfig();
         this.getServer().getPluginManager().registerEvents(this, this);
-        var ex = new CommandReload(getLogger(), () -> loadConfig());
+        CommandReload ex = new CommandReload(getLogger(), () -> loadConfig());
         this.getCommand("reload").setExecutor(ex);
     }
 
