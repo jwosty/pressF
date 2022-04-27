@@ -1,0 +1,34 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
+
+dependencies {
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
+}
+
+repositories {
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand (
+                'pluginVersion': project.pluginVersion,
+                'pluginDescription': project.pluginDescription
+        )
+        include 'plugin.yml'
+    }
+}
+
+shadowJar {
+    archiveName = "pressF-${project.pluginVersion}-bukkit.jar"
+
+    exclude 'module-info.class'
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/proguard/**'
+}
+
+artifacts {
+    archives shadowJar
+    shadow shadowJar
+}
