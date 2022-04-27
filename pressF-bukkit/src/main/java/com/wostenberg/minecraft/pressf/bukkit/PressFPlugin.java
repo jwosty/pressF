@@ -1,4 +1,4 @@
-package com.wostenberg.minecraft.pressf;
+package com.wostenberg.minecraft.pressf.bukkit;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,6 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.wostenberg.minecraft.pressf.PressFCore;
 
 public class PressFPlugin extends JavaPlugin implements Listener {
     FileConfiguration config;
@@ -43,25 +45,7 @@ public class PressFPlugin extends JavaPlugin implements Listener {
         if (enabled) {
             String deathMsg = event.getDeathMessage();
             String strUrl = config.getString(discordWebhookUrlPath);
-            if (strUrl != null) {
-                URL url = new URL(strUrl);
-                getLogger().log(Level.INFO, "Sending msg: " + deathMsg);
-                HttpURLConnection http = (HttpURLConnection)url.openConnection();
-                http.setRequestMethod("POST");
-                http.setDoOutput(true);
-                Charset charset = StandardCharsets.UTF_8;
-                // TODO: use a real json writer here
-                String str = ("{\"content\":\"" + deathMsg + "\"}");
-                getLogger().log(Level.INFO, str);
-                byte[] out = str.getBytes(charset);
-                http.setFixedLengthStreamingMode(out.length);
-                http.setRequestProperty("Content-Type", "application/json; charset=" + charset.name());
-                http.connect();
-                // TODO: check status and log if not 200
-                try(OutputStream os = http.getOutputStream()) {
-                    os.write(out);
-                }
-            }
+            PressFCore.onDeath(getLogger(), deathMsg, strUrl);
         }
     }
 }

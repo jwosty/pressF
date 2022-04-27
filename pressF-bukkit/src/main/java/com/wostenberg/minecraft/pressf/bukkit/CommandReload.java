@@ -1,4 +1,4 @@
-package com.wostenberg.minecraft.pressf;
+package com.wostenberg.minecraft.pressf.bukkit;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

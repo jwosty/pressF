@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation project(':pressF-common')
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
 }
 
@@ -22,7 +21,7 @@ processResources {
 }
 
 shadowJar {
-    archiveName = "pressF-${project.pluginVersion}-bukkit.jar"
+    archiveName = "pressF-${project.pluginVersion}-common.jar"
 
     exclude 'module-info.class'
     exclude 'META-INF/maven/**'
