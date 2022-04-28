@@ -46,6 +46,9 @@ dependencies {
 
     modImplementation('eu.pb4:placeholder-api:1.1.1+1.17.1')
 
+    // https://github.com/Carleslc/Simple-YAML
+    implementation 'me.carleslc.Simple-YAML:Simple-Yaml:1.8'
+
     shade project(':pressF-common')
 }
 
