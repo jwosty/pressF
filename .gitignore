@@ -67,6 +67,12 @@ hs_err_pid*
 build/
 bin/
 .gradle/
-/.idea/
 out/
 run/
+production/
+
+# IntelliJ IDEA - user-specific files
+.idea/*.iws
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
