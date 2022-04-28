@@ -10,15 +10,14 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.logging.Level;
 
 public class PressFCore {
     Logger logger;
     Path cfgFilePath;
     YamlFile config;
 
-    static final String discordWebhookUrlPath = "discordWebhookUrl";
-    static final String enabledPath = "enabled";
+    public static final String discordWebhookUrlCfgKey = "discordWebhookUrl";
+    public static final String enabledCfgKey = "enabled";
 
     public PressFCore(Logger logger, Path cfgFilePath) {
         this.logger = logger;
@@ -37,14 +36,14 @@ public class PressFCore {
         }
 
         config.options().copyDefaults(true);
-        config.addDefault(discordWebhookUrlPath, "https://discordapp.com/api/webhooks/some/webhook");
-        config.addDefault(enabledPath, true);
+        config.addDefault(discordWebhookUrlCfgKey, "https://discordapp.com/api/webhooks/some/webhook");
+        config.addDefault(enabledCfgKey, true);
         config.options().copyDefaults(true);
 
         // SimpleYAML is *supposed* to write defaults back into the file if copyDefaults is set to true (which it is),
         // but it seems to have a bug or something where it only does if you also manually set something. So just work
         // around it by setting a value to itself to force it to write out the file.
-        config.set(discordWebhookUrlPath, config.getString(discordWebhookUrlPath));
+        config.set(discordWebhookUrlCfgKey, config.getString(discordWebhookUrlCfgKey));
 
     }
 
@@ -56,10 +55,14 @@ public class PressFCore {
         }
     }
 
+    public YamlFile getConfig() {
+        return config;
+    }
+
     public void onDeath(String deathMsg) throws IOException {
-        boolean enabled = config.getBoolean(enabledPath);
+        boolean enabled = config.getBoolean(enabledCfgKey);
         if (enabled) {
-            String webhookUrl = config.getString(discordWebhookUrlPath);
+            String webhookUrl = config.getString(discordWebhookUrlCfgKey);
 
             if (webhookUrl != null) {
                 URL url = new URL(webhookUrl);
