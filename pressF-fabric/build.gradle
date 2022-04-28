@@ -34,7 +34,8 @@ dependencies {
 
     Set<String> apiModules = [
             "fabric-api-base",
-            "fabric-entity-events-v1"
+            "fabric-entity-events-v1",
+            "fabric-command-api-v1"
     ]
 
     // Add each module as a dependency
