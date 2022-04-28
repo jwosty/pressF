@@ -65,6 +65,7 @@ hs_err_pid*
 !gradle-wrapper.properties
 
 build/
+bin/
 .gradle/
 /.idea/
 out/
