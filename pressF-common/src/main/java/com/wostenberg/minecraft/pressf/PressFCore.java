@@ -19,6 +19,8 @@ public class PressFCore {
     public static final String discordWebhookUrlCfgKey = "discordWebhookUrl";
     public static final String enabledCfgKey = "enabled";
 
+    public static final int COMMAND_PERMISSIONS_LEVEL = 4;
+
     public PressFCore(Logger logger, Path cfgFilePath) {
         this.logger = logger;
         this.cfgFilePath = cfgFilePath;

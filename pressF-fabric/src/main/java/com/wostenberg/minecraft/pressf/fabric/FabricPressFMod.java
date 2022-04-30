@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.wostenberg.minecraft.pressf.PressFCore;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
+import me.lucko.fabric.api.permissions.v0.Permissions;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.getBool;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
@@ -57,6 +60,7 @@ public class FabricPressFMod implements ModInitializer {
             dispatcher.register(
                 literal(MOD_ID)
                     .then(literal("config")
+                        .requires(Permissions.require("pressf.config", PressFCore.COMMAND_PERMISSIONS_LEVEL))
                         .then(literal(PressFCore.discordWebhookUrlCfgKey)
                             .executes((CommandContext<ServerCommandSource> context) -> {
                                 try {
@@ -111,12 +115,15 @@ public class FabricPressFMod implements ModInitializer {
                             }))
                         )
                     )
-                    .then(literal("reload").executes((CommandContext<ServerCommandSource> ctx) -> {
-                        corePlugin.loadConfig();
-                        String str = MOD_NAME + ": Reloaded config";
-                        ctx.getSource().sendFeedback(new LiteralText(str), true);
-                        return 1;
-                    }))
+                    .then(literal("reload")
+                        .requires(Permissions.require("pressf.reload", PressFCore.COMMAND_PERMISSIONS_LEVEL))
+                        .executes((CommandContext<ServerCommandSource> ctx) -> {
+                            corePlugin.loadConfig();
+                            String str = MOD_NAME + ": Reloaded config";
+                            ctx.getSource().sendFeedback(new LiteralText(str), true);
+                            return 1;
+                        }
+                    ))
             );
         });
     }
