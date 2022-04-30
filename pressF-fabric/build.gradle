@@ -1,0 +1,121 @@
+import net.fabricmc.loom.task.RemapJarTask
+import de.undercouch.gradle.tasks.download.Download
+import java.io.File
+import java.net.URI
+
+plugins {
+    id 'fabric-loom' version '0.10.+'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'de.undercouch.download' version '5.0.2'
+}
+
+tasks.withType(JavaCompile) {
+    // override, compile targeting J17
+    options.release = 17
+}
+
+repositories {
+    maven { url 'https://maven.fabricmc.net/' }
+    maven {
+        url 'https://maven.nucleoid.xyz/'
+        content {
+            includeGroup('eu.pb4')
+        }
+    }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    mavenLocal()
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+def luckpermsJarLocation = buildDir.toPath().resolve('luckperms').resolve(new File(new URL(project.luckpermsJarUrl).getPath()).getName()).toFile()
+
+task downloadLuckperms(type: Download) {
+    src project.luckpermsJarUrl
+    dest luckpermsJarLocation
+    overwrite false
+}
+
+def fabricApiVersion = '0.51.1+1.18.2'
+
+dependencies {
+    // https://modmuss50.me/fabric.html
+    minecraft 'com.mojang:minecraft:1.18.2'
+    mappings 'net.fabricmc:yarn:1.18.2+build.1:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.13.3'
+
+    // Add each module as a dependency
+    Set<String> apiModules = [
+        "fabric-api-base",
+        "fabric-entity-events-v1",
+        "fabric-command-api-v1"
+    ]
+
+    apiModules.forEach {
+        modImplementation(fabricApi.module(it, fabricApiVersion))
+    }
+
+    // fabric modules required only by luckperms to run at dev time but aren't a direct dependency of ours
+    Set<String> luckpermsRuntimeModules = [
+        "fabric-lifecycle-events-v1",
+        "fabric-networking-v0"
+    ]
+
+    luckpermsRuntimeModules.forEach {
+        modRuntimeOnly(fabricApi.module(it, fabricApiVersion))
+    }
+
+    include(modImplementation('me.lucko:fabric-permissions-api:0.1-SNAPSHOT'))
+
+    // Comment this line out to launch without LuckPerms on the dev server
+//    modRuntimeOnly(files(luckpermsJarLocation))
+
+    // https://github.com/Carleslc/Simple-YAML
+    implementation 'me.carleslc.Simple-YAML:Simple-Yaml:1.8'
+
+    shade project(':pressF-common')
+}
+
+compileJava.dependsOn(downloadLuckperms)
+
+processResources {
+    inputs.property 'version', project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'fabric.mod.json'
+        expand (
+                'pluginVersion': project.pluginVersion,
+                'pluginDescription': project.pluginDescription
+        )
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'fabric.mod.json'
+    }
+}
+
+shadowJar {
+    archiveFileName = "pressF-fabric-${project.pluginVersion}-dev.jar"
+    configurations = [project.configurations.shade]
+
+    exclude 'module-info.class'
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/proguard/**'
+}
+
+task remappedShadowJar(type: RemapJarTask) {
+    dependsOn tasks.shadowJar
+    input = tasks.shadowJar.archiveFile
+    addNestedDependencies = true
+    archiveFileName = "pressF-${project.pluginVersion}-fabric.jar"
+}
+
+tasks.assemble.dependsOn tasks.remappedShadowJar
+
+artifacts {
+    archives remappedShadowJar
+    shadow shadowJar
+}

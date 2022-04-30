@@ -1,0 +1,33 @@
+{
+    "schemaVersion": 1,
+    "id": "pressf",
+    "name": "pressF",
+    "version": "${pluginVersion}",
+    "description": "${pluginDescription}",
+    "authors": [
+        "Jwosty"
+    ],
+    "contact": {
+        "homepage": "https://github.com/jwosty/pressF",
+        "sources": "https://github.com/jwosty/pressF",
+        "issues": "https://github.com/jwosty/pressF/issues"
+    },
+    "license": "MIT",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.wostenberg.minecraft.pressf.fabric.FabricPressFMod"
+        ]
+    },
+    "mixins": [
+        "pressf.mixins.json"
+    ],
+    "depends": {
+        "minecraft": "1.18.2",
+        "fabricloader": ">=0.4.0",
+        "fabric-api-base": "*",
+        "fabric-entity-events-v1": "*",
+        "fabric-command-api-v1": "*",
+        "java": ">=17"
+    }
+}

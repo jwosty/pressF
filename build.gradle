@@ -1,0 +1,63 @@
+plugins {
+    id 'com.github.jlouns.cpe' version '0.5.0'
+    id 'java'
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+allprojects {
+    group = 'com.wostenberg'
+    version = '0.1'
+
+    configurations {
+        compileClasspath // Fabric-loom needs this for remap jar for some reason
+    }
+
+    repositories {
+        // https://github.com/Carleslc/Simple-YAML
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'java-library'
+
+    ext {
+        baseVersion = '0.1'
+        patchVersion = determinePatchVersion()
+        pluginVersion = baseVersion + '.' + patchVersion
+        pluginDescription = 'pressF humiliates dead players via Discord.'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.release = 8
+    }
+
+    processResources {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+def determinePatchVersion() {
+    def tagInfo = new ByteArrayOutputStream()
+    exec {
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            commandLine 'cmd', '/c', 'git describe --tags'
+        } else {
+            commandLine 'git', 'describe', '--tags'
+        }
+        standardOutput = tagInfo
+    }
+    tagInfo = tagInfo.toString()
+
+    return tagInfo.contains('-') ? tagInfo.split("-")[1] : 0
+}
