@@ -9,7 +9,7 @@ java {
 
 allprojects {
     group = 'com.wostenberg'
-    version = '0.1'
+    version = '0.2'
 
     configurations {
         compileClasspath // Fabric-loom needs this for remap jar for some reason
@@ -27,7 +27,7 @@ subprojects {
     apply plugin: 'java-library'
 
     ext {
-        baseVersion = '0.1'
+        baseVersion = '0.2'
         patchVersion = determinePatchVersion()
         pluginVersion = baseVersion + '.' + patchVersion
         pluginDescription = 'pressF humiliates dead players via Discord.'
