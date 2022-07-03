@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation project(':pressF-common')
-    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
     // https://github.com/Carleslc/Simple-YAML
     implementation 'me.carleslc.Simple-YAML:Simple-Yaml:1.8'
 }
@@ -34,9 +34,7 @@ processResources {
 }
 
 minecraftServerConfig {
-    // jarUrl.set(LaunchMinecraftServerTask.JarUrl.Paper("1.18.2"))
-    // jarUrl.set("https://cdn.getbukkit.org/craftbukkit/craftbukkit-1.16.5.jar")
-    jarUrl.set("https://papermc.io/api/v2/projects/paper/versions/1.18.2/builds/312/downloads/paper-1.18.2-312.jar")
+    jarUrl.set("https://api.papermc.io/v2/projects/paper/versions/1.19/builds/43/downloads/paper-1.19-43.jar")
 }
 
 task buildAndLaunchServer(type: LaunchMinecraftServerTask) {
@@ -44,11 +42,10 @@ task buildAndLaunchServer(type: LaunchMinecraftServerTask) {
     doFirst {
         copy {
             from(buildDir.toPath().resolve("libs/pressF-${project.pluginVersion}-bukkit.jar".toString()))
-            // from(buildDir.resolve("libs/pressF-0.1.6-bukkit.jar"))
             into(buildDir.toPath().resolve("MinecraftServer/plugins"))
         }
     }
-    jarUrl.set("https://papermc.io/api/v2/projects/paper/versions/1.18.2/builds/312/downloads/paper-1.18.2-312.jar")
+    jarUrl.set("https://api.papermc.io/v2/projects/paper/versions/1.19/builds/43/downloads/paper-1.19-43.jar")
 }
 
 shadowJar {

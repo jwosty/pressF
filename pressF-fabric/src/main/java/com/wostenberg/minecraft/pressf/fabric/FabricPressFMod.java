@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.wostenberg.minecraft.pressf.PressFCore;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.damage.DamageTracker;
 import net.minecraft.server.command.ServerCommandSource;
@@ -56,7 +56,7 @@ public class FabricPressFMod implements ModInitializer {
     }
 
     private void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(
                 literal(MOD_ID)
                     .then(literal("config")
@@ -65,13 +65,14 @@ public class FabricPressFMod implements ModInitializer {
                             .executes((CommandContext<ServerCommandSource> context) -> {
                                 try {
                                     String value = corePlugin.getConfig().getString(PressFCore.discordWebhookUrlCfgKey);
+
                                     Text resultMsg =
-                                        (new LiteralText(value))
+                                        MutableText.of(new LiteralTextContent(value))
                                             .setStyle(
                                                 Style.EMPTY
                                                     .withColor(Formatting.GREEN)
                                                     .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, value))
-                                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy to clipboard"))));
+                                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, MutableText.of(new LiteralTextContent("Click to copy to clipboard")))));
                                     context.getSource().sendFeedback(resultMsg, false);
                                     return 1;
                                 } catch (Exception e) {
@@ -83,7 +84,7 @@ public class FabricPressFMod implements ModInitializer {
                                 try {
                                     String value = getString(ctx, "value");
                                     corePlugin.getConfig().set(PressFCore.discordWebhookUrlCfgKey, value);
-                                    ctx.getSource().sendFeedback(new LiteralText(MOD_NAME + ": Changed config value '" + PressFCore.discordWebhookUrlCfgKey + "'"), true);
+                                    ctx.getSource().sendFeedback(Text.of(MOD_NAME + ": Changed config value '" + PressFCore.discordWebhookUrlCfgKey + "'"), true);
                                     return 1;
                                 } catch (Exception e) {
                                     LOGGER.error("Error executing command: {}", e);
@@ -95,7 +96,7 @@ public class FabricPressFMod implements ModInitializer {
                             .executes((CommandContext<ServerCommandSource> ctx) -> {
                                 try {
                                     Boolean value = corePlugin.getConfig().getBoolean(PressFCore.enabledCfgKey);
-                                    ctx.getSource().sendFeedback(new LiteralText(value.toString()), false);
+                                    ctx.getSource().sendFeedback(Text.of(value.toString()), false);
                                     return 1;
                                 } catch (Exception e) {
                                     LOGGER.error("Error executing command: {}", e);
@@ -106,7 +107,7 @@ public class FabricPressFMod implements ModInitializer {
                                 try {
                                     boolean value = getBool(ctx, "value");
                                     corePlugin.getConfig().set(PressFCore.enabledCfgKey, value);
-                                    ctx.getSource().sendFeedback(new LiteralText(MOD_NAME + ": Changed config value '" + PressFCore.enabledCfgKey + "'"), true);
+                                    ctx.getSource().sendFeedback(Text.of(MOD_NAME + ": Changed config value '" + PressFCore.enabledCfgKey + "'"), true);
                                     return 1;
                                 } catch (Exception e) {
                                     LOGGER.error("Error executing command: {}", e);
@@ -120,7 +121,7 @@ public class FabricPressFMod implements ModInitializer {
                         .executes((CommandContext<ServerCommandSource> ctx) -> {
                             corePlugin.loadConfig();
                             String str = MOD_NAME + ": Reloaded config";
-                            ctx.getSource().sendFeedback(new LiteralText(str), true);
+                            ctx.getSource().sendFeedback(Text.of(str), true);
                             return 1;
                         }
                     ))

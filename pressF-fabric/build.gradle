@@ -4,7 +4,7 @@ import java.io.File
 import java.net.URI
 
 plugins {
-    id 'fabric-loom' version '0.10.+'
+    id 'fabric-loom' version '0.12.+'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
     id 'de.undercouch.download' version '5.0.2'
 }
@@ -39,19 +39,19 @@ task downloadLuckperms(type: Download) {
     overwrite false
 }
 
-def fabricApiVersion = '0.51.1+1.18.2'
+def fabricApiVersion = '0.55.2+1.19'
 
 dependencies {
     // https://modmuss50.me/fabric.html
-    minecraft 'com.mojang:minecraft:1.18.2'
-    mappings 'net.fabricmc:yarn:1.18.2+build.1:v2'
-    modImplementation 'net.fabricmc:fabric-loader:0.13.3'
+    minecraft 'com.mojang:minecraft:1.19'
+    mappings 'net.fabricmc:yarn:1.19+build.4'
+    modImplementation 'net.fabricmc:fabric-loader:0.14.8'
 
     // Add each module as a dependency
     Set<String> apiModules = [
         "fabric-api-base",
         "fabric-entity-events-v1",
-        "fabric-command-api-v1"
+        "fabric-command-api-v2"
     ]
 
     apiModules.forEach {
@@ -61,7 +61,7 @@ dependencies {
     // fabric modules required only by luckperms to run at dev time but aren't a direct dependency of ours
     Set<String> luckpermsRuntimeModules = [
         "fabric-lifecycle-events-v1",
-        "fabric-networking-v0"
+        "fabric-networking-api-v1"
     ]
 
     luckpermsRuntimeModules.forEach {
